@@ -65,9 +65,84 @@ Spend figures are rough estimates for Mumbai and online ordering. Check them whe
 
 ## The route at a glance
 
-&#91;embedded content: roadmap · 6 parts, 5 gates\]
+**Six parts, each ending in a gate. The chassis and PCB are yours.**
+
+```mermaid
+flowchart TD
+    A["<b>A Foundations</b><br>How it works, your parts, electronics<br><i>5-6 sessions, ₹0</i>"]
+    GateA{"Gate: spec sheet filled"}
+    B["<b>B Bench bring-up</b><br>Sensor, motors, calibration, PID theory<br><i>8-10 sessions, ₹200-400</i>"]
+    GateB{"Gate: sensor, motors and position work on the bench"}
+    C["<b>C Chassis from zero</b><br>SolidWorks design, test prints, real print<br><i>12-15 sessions, ₹230-580</i>"]
+    GateC{"Gate: printed chassis fits every part"}
+    D["<b>D Your own PCB</b><br>KiCad, Rev A design, order, bring-up<br><i>12-15 sessions, ₹800-2,500</i>"]
+    GateD{"Gate: Rev A passes bring-up"}
+    E["<b>E Build and tune</b><br>Assemble, race firmware, tuning on a real track<br><i>10-15 sessions, ₹130-150</i>"]
+    GateE{"Gate: clean laps on your test track at a speed you trust"}
+    F["<b>F Competition</b><br>Rules, race day, upgrades<br><i>3-5 sessions, ₹0-100</i>"]
+
+    A --> GateA --> B --> GateB --> C --> GateC --> D --> GateD --> E --> GateE --> F
+    style C stroke:#2563eb,stroke-width:2px
+    style D stroke:#2563eb,stroke-width:2px
+```
+
+```
++-------------------------------------------------------+
+| A Foundations                                         |  5-6 sessions, ₹0
+| How it works, your parts, electronics                 |
++-------------------------------------------------------+
+                           |
+                           v
+              [Gate: spec sheet filled]
+                           |
+                           v
++-------------------------------------------------------+
+| B Bench bring-up                                      |  8-10 sessions, ₹200-400
+| Sensor, motors, calibration, PID theory               |
++-------------------------------------------------------+
+                           |
+                           v
+   [Gate: sensor, motors and position work on the bench]
+                           |
+                           v
++-------------------------------------------------------+
+| C Chassis from zero                                   |  12-15 sessions, ₹230-580
+| SolidWorks design, test prints, real print            |
++-------------------------------------------------------+
+                           |
+                           v
+          [Gate: printed chassis fits every part]
+                           |
+                           v
++-------------------------------------------------------+
+| D Your own PCB                                        |  12-15 sessions, ₹800-2,500
+| KiCad, Rev A design, order, bring-up                  |
++-------------------------------------------------------+
+                           |
+                           v
+               [Gate: Rev A passes bring-up]
+                           |
+                           v
++-------------------------------------------------------+
+| E Build and tune                                      |  10-15 sessions, ₹130-150
+| Assemble, race firmware, tuning on a real track       |
++-------------------------------------------------------+
+                           |
+                           v
+   [Gate: clean laps on your test track at a speed you trust]
+                           |
+                           v
++-------------------------------------------------------+
+| F Competition                                         |  3-5 sessions, ₹0-100
+| Rules, race day, upgrades                             |
++-------------------------------------------------------+
+```
+
+*roadmap · 6 parts, 5 gates*
 
 Each gate is the **Done when** check at the end of that part. Do not start the next part until it passes. The two highlighted parts, C and D, are the ones you design from zero.
+
+---
 
 ## Part A: Foundations
 
@@ -89,9 +164,9 @@ In exam mode you can do all of Part A in short sessions. It needs a ruler, a mul
 
 **Why loop speed matters (worked example).** A robot moving at 1 m/s travels 1 mm every millisecond. If your loop runs at 1,000 times a second, you correct once per millimetre. If it runs at 100 times a second, you correct once per 10 mm, and the robot can drift a long way between corrections. Faster loops give smoother, faster robots.
 
-**Sensor geometry.** Your 8 sensors sit in a row with a gap between them called the **pitch** (call it p). The robot does not just ask which sensor sees the line. It takes a weighted average of all 8 readings (Part B), which gives a position far finer than one sensor width. Two things to check on your board:
+**Sensor geometry.** Your 8 sensors sit in a row with a gap between them called the **pitch** (call it $p$). The robot does not just ask which sensor sees the line. It takes a weighted average of all 8 readings (Part B), which gives a position far finer than one sensor width. Two things to check on your board:
 
-- **Pitch versus line width.** If the gap between sensors is bigger than the line is wide, the line can slip between two sensors and the robot goes blind. Measure p and compare it with your competition's line width.
+- **Pitch versus line width.** If the gap between sensors is bigger than the line is wide, the line can slip between two sensors and the robot goes blind. Measure $p$ and compare it with your competition's line width.
 - **Sensor height.** The RLS-08 works best about 3 mm above the floor (the listing says the recommended maximum is about 6 mm). Your chassis must hold that height reliably.
 
 **What actually wins competitions.** In most beginner and college events, the order is: finish every run without leaving the line first, then be fast (rule of thumb).
@@ -106,8 +181,9 @@ In exam mode you can do all of Part A in short sessions. It needs a ruler, a mul
 | Speed profile | Fast on straights, slow in turns | Chapter 18 |
 | Knowing the rules | Line width, intersections and gaps change the code | Part F |
 
-**The physics of fast corners (worked example).** A robot can only take a corner as fast as its tyres hold. The limit is roughly v = square root of (grip × g × radius). With a grip coefficient of 0.8 (an example value, not measured) and a corner radius of 0.20 m: v = square root of (0.8 × 9.81 × 0.20) = square root of 1.57 ≈ 1.25 m/s. Two lessons:
-
+**The physics of fast corners (worked example).** A robot can only take a corner as fast as its tyres hold. The limit is roughly $v = \sqrt{\text{grip} \times g \times \text{radius}}$. With a grip coefficient of 0.8 (an example value, not measured) and a corner radius of 0.20 m:
+$$v = \sqrt{0.8 \times 9.81 \times 0.20} = \sqrt{1.57} \approx 1.25\text{ m/s}$$
+Two lessons:
 1. **Grip matters more than weight for the corner limit.** The robot's mass cancels out of this formula.
 2. **Light weight still helps,** because the same motor force speeds up and brakes a light robot faster.
 
@@ -126,18 +202,18 @@ In exam mode you can do all of Part A in short sessions. It needs a ruler, a mul
 
 | Item | How to measure | Tool | Your value |
 | --- | --- | --- | --- |
-| N20 label voltage and RPM | Read the motor label | Eyes |  |
-| N20 body length × width × height | Measure | Caliper or ruler |  |
-| N20 shaft diameter and wheel diameter | Measure | Caliper or ruler |  |
-| RLS-08 width and height | Measure | Ruler |  |
-| RLS-08 mounting hole spacing and hole diameter | Measure | Caliper or ruler |  |
-| RLS-08 sensor pitch (centre to centre) | Measure | Ruler |  |
-| RLS-08 pin names and order | Photo of the back | Phone |  |
-| Each LiPo: voltage, length × width × thickness, weight | Measure | Multimeter, ruler, scale |  |
-| Nano: length × width, hole positions | Measure | Ruler |  |
-| TB6612 breakout: length × width, header spacing | Measure | Caliper or ruler |  |
-| Buck module: length × width × height | Measure | Ruler |  |
-| Total weight of all parts | Weigh them | Kitchen or jewellery scale |  |
+| N20 label voltage and RPM | Read the motor label | Eyes | |
+| N20 body length × width × height | Measure | Caliper or ruler | |
+| N20 shaft diameter and wheel diameter | Measure | Caliper or ruler | |
+| RLS-08 width and height | Measure | Ruler | |
+| RLS-08 mounting hole spacing and hole diameter | Measure | Caliper or ruler | |
+| RLS-08 sensor pitch (centre to centre) | Measure | Ruler | |
+| RLS-08 pin names and order | Photo of the back | Phone | |
+| Each LiPo: voltage, length × width × thickness, weight | Measure | Multimeter, ruler, scale | |
+| Nano: length × width, hole positions | Measure | Ruler | |
+| TB6612 breakout: length × width, header spacing | Measure | Caliper or ruler | |
+| Buck module: length × width × height | Measure | Ruler | |
+| Total weight of all parts | Weigh them | Kitchen or jewellery scale | |
 
 A digital Vernier caliper (about ₹250 to 400) is the single most useful tool for Parts C and D. A ruler is fine for now, but you will want the caliper before you start CAD.
 
@@ -147,16 +223,15 @@ You can build the whole robot with these seven ideas.
 
 **1. Voltage, current, ground (the water picture).** Voltage is water pressure, current is how much water flows, ground is the drain everything returns to. All parts must share one ground, or signals have no common reference and nothing behaves. **Must know.**
 
-**2. Ohm's law.** Current = voltage / resistance. Example: an LED with about 2 V across it on a 5V pin through a 330 ohm resistor draws (5 − 2) / 330 ≈ 9 mA. **Should know.**
+**2. Ohm's law.** Current = voltage / resistance ($I = V / R$). Example: an LED with about 2 V across it on a 5V pin through a 330 ohm resistor draws $(5 - 2) / 330 \approx 9\text{ mA}$. **Should know.**
 
-**3. Voltage divider.** Two resistors turn a high voltage into a lower one: Vout = Vin × R2 / (R1 + R2). Example for the Bluetooth module (which wants about 3.3 V on its input): 5 × 2.2 / (1 + 2.2) = 3.44 V. **Should know.**
+**3. Voltage divider.** Two resistors turn a high voltage into a lower one: $V_{out} = V_{in} \times R_2 / (R_1 + R_2)$. Example for the Bluetooth module (which wants about 3.3 V on its input): $5 \times 2.2 / (1 + 2.2) = 3.44\text{ V}$. **Should know.**
 
-**4. PWM.** The Nano cannot output "half voltage", so it switches the motor fully on and off very fast. The share of time spent on is the duty cycle. At 70% duty on 7.4 V, the motor feels an average of about 5.2 V. In code, analogWrite(pin, 180) is 180/255 ≈ 70%. **Must know.**
+**4. PWM.** The Nano cannot output "half voltage", so it switches the motor fully on and off very fast. The share of time spent on is the duty cycle. At 70% duty on 7.4 V, the motor feels an average of about 5.2 V. In code, `analogWrite(pin, 180)` is $180/255 \approx 70\%$. **Must know.**
 
 **5. Decoupling capacitors.** Motors draw sudden bursts of current that dip the supply voltage and reset the Nano. A capacitor next to the driver acts as a tiny local water tank. You will use 100µF and 0.1µF across the motor supply. **Must know.**
 
 **6. LiPo cells and series packs.** Two 3.7 V cells in series add to about 7.4 V. Rules for your two single cells:
-
 1. Charge each cell separately on your charger.
 2. Before joining, measure both. They should be within about 0.05 V.
 3. Use two identical cells (same capacity and brand).
@@ -175,6 +250,8 @@ You can build the whole robot with these seven ideas.
 - Your spec sheet is filled in.
 - You can explain, in your own words, sense, decide and act, and why a faster loop helps.
 - You can explain why a buck is used and why each LiPo is measured separately.
+
+---
 
 ## Part B: Bench bring-up
 
@@ -316,8 +393,8 @@ int readPosition() {                          // returns 0..7000, centre 3500
 
 **Worked examples (the weighted average).**
 
-- The line sits centred between S4 and S5, each reading 800. Position = (800 × 3000 + 800 × 4000) / 1600 = **3500**, dead centre.
-- S4 reads 300 and S5 reads 1000. Position = (300 × 3000 + 1000 × 4000) / 1300 ≈ **3769**, so the line is slightly right of centre.
+- The line sits centred between S4 and S5, each reading 800. Position = $(800 \times 3000 + 800 \times 4000) / 1600 = \mathbf{3500}$, dead centre.
+- S4 reads 300 and S5 reads 1000. Position = $(300 \times 3000 + 1000 \times 4000) / 1300 \approx \mathbf{3769}$, so the line is slightly right of centre.
 
 **Line lost.** If no sensor sees the line, return 0 or 7000 depending on which side it was last seen. The robot then turns hard in that direction to find it again.
 
@@ -348,7 +425,7 @@ int right = baseSpeed - correction;
 drive(left, right);
 ```
 
-**Worked example (numbers).** Kp = 0.1, Kd = 3, base speed 100. The error is +1500 now and was +1520 on the last loop. P term = 0.1 × 1500 = 150. D term = 3 × (1500 − 1520) = −60. Correction = 90. Left wheel = 190 (capped to your PWM limit), right wheel = 10. The D term took 60 away because the robot is already closing in on the line. Without D, the robot would keep turning hard and shoot past the line.
+**Worked example (numbers).** Kp = 0.1, Kd = 3, base speed 100. The error is +1500 now and was +1520 on the last loop. P term = $0.1 \times 1500 = 150$. D term = $3 \times (1500 - 1520) = -60$. Correction = 90. Left wheel = 190 (capped to your PWM limit), right wheel = 10. The D term took 60 away because the robot is already closing in on the line. Without D, the robot would keep turning hard and shoot past the line.
 
 **Try it on your laptop first (no robot needed).** This is a toy simulation I ran in my sandbox. It uses made-up numbers (7 cm sensor arm, 15 mm sensor pitch, motors that take about 50 ms to respond), so it shows trends, not your robot's real values.
 
@@ -395,6 +472,8 @@ Results from my run (overshoot to the other side of the line, and time to settle
 
 **Done when:** you can explain what P and D each do in your own words, and you have run the simulation and changed Kp and Kd yourself.
 
+---
+
 ## Part C: Chassis from zero
 
 You need your Part A spec sheet filled in, and a caliper helps a lot. The goal of this part is a printed chassis that holds every part rigidly, keeps the sensor at the right height, and weighs as little as practical. You will test-fit small prints before the real one, so a mistake costs a few rupees, not a whole chassis.
@@ -437,17 +516,17 @@ REAR
 
 | Item | Your weight (g) | Notes |
 | --- | --- | --- |
-| RLS-08 sensor board |  | One of the heaviest items because of its size |
-| 2 × N20 motor with wheel |  |  |
-| 2 × LiPo cell |  | Mount low and between the wheels |
-| Nano |  |  |
-| TB6612 module |  |  |
-| Buck module |  |  |
-| Your PCB (Part D) |  | A thinner board weighs less |
-| Chassis print |  | Your biggest design lever |
-| Screws, standoffs, wires |  | They add up |
-| Tyres |  |  |
-| **Total** |  | Aim as low as practical. Under about 150 g is a reasonable first target (rule of thumb) |
+| RLS-08 sensor board | | One of the heaviest items because of its size |
+| 2 × N20 motor with wheel | | |
+| 2 × LiPo cell | | Mount low and between the wheels |
+| Nano | | |
+| TB6612 module | | |
+| Buck module | | |
+| Your PCB (Part D) | | A thinner board weighs less |
+| Chassis print | | Your biggest design lever |
+| Screws, standoffs, wires | | They add up |
+| Tyres | | |
+| **Total** | | Aim as low as practical. Under about 150 g is a reasonable first target (rule of thumb) |
 
 **Printing choices (rule of thumb, ask your printer).**
 
@@ -524,6 +603,8 @@ You have the SolidWorks student license. Menu names below match recent versions,
 
 **Done when:** the real chassis holds every part rigidly, the sensor height is adjustable, and your weight budget total matches the weight on the scale.
 
+---
+
 ## Part D: Your own PCB
 
 This part turns your breadboard circuit into a board that fits your chassis. You need three things first: the circuit working on the breadboard (Part B), the real dimensions of every module (Part A spec sheet), and your chassis CAD (Part C), because the board outline and mounting holes must match it.
@@ -543,7 +624,7 @@ This part turns your breadboard circuit into a board that fits your chassis. You
 3. **Assign footprints.** A footprint is the physical pad pattern for a part. Choose one for every symbol.
 4. **Update PCB from schematic** (F8 in recent versions). Parts appear in the PCB editor, joined by thin "ratsnest" lines showing what still needs a track.
 5. **Draw the board outline** on the **Edge.Cuts** layer.
-6. **Place parts, then route** tracks (X). Add a copper zone (a filled area) for ground and fill it (B).
+6. **Place parts, then route** tracks (X). Add a **copper zone** (a filled area) for ground and fill it (B).
 7. **Design Rules Check (DRC)** until clean.
 8. **Look at it in the 3D viewer,** then export **Gerber and drill files** and open them in a Gerber viewer to confirm they match.
 
@@ -651,9 +732,11 @@ Use the pin map in Appendix A for every Nano connection.
 
 | Error found | Workaround used | Fix in Rev B |
 | --- | --- | --- |
-|  |  |  |
+| | | |
 
 **Done when:** Rev A powers up cleanly and every test from Chapters 5 to 8 passes on it.
+
+---
 
 ## Part E: Build, firmware and tuning
 
@@ -803,9 +886,11 @@ void loop() {
 
 | Date | Each cell (V) | Kp | Ki | Kd | Base | Max | Sensor height | Result | Lap time |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |  |  |  |  |
+| | | | | | | | | | |
 
 **Done when:** the robot completes your test tracks cleanly at a speed you trust, and your log shows what you tried and what each change did.
+
+---
 
 ## Part F: Competition
 
@@ -849,14 +934,14 @@ When you know your event's rules, tell me and I will help write the code for the
 
 | Check | Done |
 | --- | --- |
-| Both cells fully charged, each measured with the multimeter |  |
-| A spare pair of charged cells, also measured |  |
-| Code backed up on your laptop, and the last good settings written down |  |
-| Spare Nano, TB6612 and buck if your budget allows |  |
-| Tools: small screwdrivers, spare screws, wire, solder, tape, multimeter |  |
-| Coins or a feeler gauge for setting sensor height |  |
-| Tyre-cleaning tape or cloth |  |
-| Your log, the rules and the track layout if you have it |  |
+| Both cells fully charged, each measured with the multimeter | [ ] |
+| A spare pair of charged cells, also measured | [ ] |
+| Code backed up on your laptop, and the last good settings written down | [ ] |
+| Spare Nano, TB6612 and buck if your budget allows | [ ] |
+| Tools: small screwdrivers, spare screws, wire, solder, tape, multimeter | [ ] |
+| Coins or a feeler gauge for setting sensor height | [ ] |
+| Tyre-cleaning tape or cloth | [ ] |
+| Your log, the rules and the track layout if you have it | [ ] |
 
 **At the venue.**
 
@@ -893,6 +978,8 @@ ADCSRA = (ADCSRA & 0xF8) | 0x04;   // ADC clock prescaler 16
 ```
 
 **What to learn next.** Once the robot is running well, the next big skills are encoder-based speed control, mapping the track on the first lap, and a custom sensor bar.
+
+---
 
 ## Appendices
 
@@ -982,7 +1069,7 @@ Copy a row for each session. Writing one line takes a minute and saves hours.
 
 | Date | Chapter | What I did | What happened | Next |
 | --- | --- | --- | --- | --- |
-|  |  |  |  |  |
+| | | | | |
 
 ### Appendix G: A weekly rhythm
 
