@@ -1,58 +1,69 @@
-# Autonomous Line-Following Robot
+# Line Follower Robot
 
-An autonomous line-following robot designed and built from scratch using custom SolidWorks 3D CAD, a custom KiCad Rev A PCB, an 8-channel IR sensor array, and closed-loop PID control on an Arduino Nano.
+An 8-sensor line follower with PID control, a custom 3D-printed chassis and a custom PCB. It runs on an Arduino Nano.
 
-Designed for **20 to 30 minute sessions** to balance steady progress alongside exams and coursework.
+## How it works
 
----
+1. **Sense:** the RLS-08 sensor array looks at the floor. Black reflects less light than white.
+2. **Decide:** the Nano turns the 8 readings into one position number (0 to 7000, centre = 3500). Then it calculates the error:
+   `error = position - 3500`
+3. **Act:** PID turns the error into a steering correction. The TB6612 driver speeds up one motor and slows the other:
+   `left = speed + correction` and `right = speed - correction`
 
-## The Route (Step-by-Step Approach)
+## Components and specs
 
-To keep the project clean, focused, and beginner-friendly, we are building and documenting the robot step by step:
+| No. | Component | Qty | Spec / setting |
+|---|---|---|---|
+| 1 | N20 gear motors with wheels | 2 | Read voltage and RPM from the label. Measure shaft and wheel diameter |
+| 2 | Rubber grip tyres | 1 set | Measure the diameter with the tyres fitted |
+| 3 | N20 motor brackets | 2 | The chassis CAD is drawn around their hole pattern |
+| 4 | RLS-08 8-sensor array | 1 | 8 TCRT5000 IR pairs. Use the analog outputs (A0 to A7). Keep it 3 to 5 mm above the floor |
+| 5 | Arduino Nano | 1 | ATmega328P, 16 MHz, 5 V logic, 10-bit analog reads (0 to 1023) |
+| 6 | TB6612FNG motor driver | 1 | Dual H-bridge. STBY must be HIGH. About 1.2 A continuous per channel (check your breakout) |
+| 7 | Single LiPo cells | 2 | 3.7 V each (4.2 V full). In series: 7.4 V (8.4 V full). Measure both, they should match within 0.05 V |
+| 8 | LiPo charger | 1 | Charge each cell separately to 4.2 V |
+| 9 | Multimeter | 1 | Sets the buck to 5.0 V, checks cells and continuity |
+| 10 | LM2596 buck module (adjustable, no display) | 1 | Set the output to exactly 5.0 V before connecting the Nano |
+| 11 | Slide switch | 1 | At least 1 A. Switches battery positive |
+| 12 | Tactile push buttons | 2 | Start on D2, Calibrate on D10, each to GND |
+| 13 | Capacitors | 100 µF 16 V x2, 0.1 µF x6 | 100 µF + 0.1 µF across VM and GND next to the driver. 0.1 µF also on the 5 V rail |
+| 14 | LED and 330 Ω resistor | 2 each | Status LED on D12. One is a spare |
+| 15 | LiPo battery holder | 1 | Holds both cells in series, two output wires |
+| 16 | Battery connector pair (XT30 or JST-XH) | 1 pair | One half on the holder's wires, the other on the breadboard lead and later the PCB |
+| 17 | Ball caster | 1 | Its height decides the chassis geometry, so measure it before the CAD |
 
-1. **Part A — Foundations & Spec Sheet:** Understand sense-decide-act fundamentals, electronic basics, and measure all hardware in hand.
-2. **Part B — Bench Bring-up:** Wire and validate sensors, motors, auto-calibration, and PID on a breadboard without building the chassis yet.
-3. **Part C — Chassis from Zero:** Model the chassis, brackets, and sensor mount in SolidWorks; test-fit 3D prints.
-4. **Part D — Custom PCB (Rev A):** Design the schematic and layout in KiCad using modular headers, verify 1:1 paper prints, and assemble the board.
-5. **Part E — Build, Firmware & Tuning:** Full robot assembly, state-machine race firmware upload, and closed-loop track tuning.
-6. **Part F — Competition & Upgrades:** Race-day setup, track element handling (intersections, 90° turns, gaps), and advanced upgrades.
+Tools: soldering iron and flux, wire cutter and stripper, screwdriver set, breadboard, jumper wires (male-male and male-female), USB cable.
 
-> 📖 **Full Engineering Book:** For the complete in-depth guide with physics derivations, KiCad walkthroughs, SolidWorks lessons, and control theory simulation, see [The Line Follower Book](docs/the_line_follower_book.md).
+## Pin map (Arduino Nano)
 
----
+| Function | Pin |
+|---|---|
+| Sensors S1 to S8 (left to right) | A0 to A7 |
+| Left motor (PWMA, AIN1, AIN2) | D5, D7, D8 |
+| Right motor (PWMB, BIN1, BIN2) | D6, D4, D9 |
+| Driver standby (STBY) | D3 (must be HIGH) |
+| Start button (to GND) | D2 |
+| Calibrate button (to GND) | D10 |
+| Status LED | D12 |
 
-## Component Inventory & Bill of Materials
+## Power
 
-Here is our complete hardware inventory and procurement checklist:
+Battery → slide switch → buck module and TB6612 VM. Buck 5.0 V → Nano 5V pin, TB6612 VCC and sensor VCC. All grounds are connected together.
 
-| No. | Component | Qty | Status | Notes |
-| :---: | --- | :---: | :---: | --- |
-| 1 | **N20 motors with wheels** | 2 | HAVE | Read the label for voltage and RPM; measure shaft and wheel diameter |
-| 2 | **Rubber grip tyres** | 1 set | HAVE | Measure the diameter with the tyres fitted on the wheels |
-| 3 | **N20 motor brackets** | 2 | BUY (local store) | The chassis CAD will be drawn around their mounting hole pattern |
-| 4 | **RLS-08 8-sensor array** | 1 | HAVE | 8 TCRT5000 IR reflectance pairs; optimal height 3–5 mm above floor (analog pins A0–A7) |
-| 5 | **Arduino Nano** | 1 | HAVE | ATmega328P @ 16 MHz, 5V logic; test bootloader with Blink example (CH340 driver if clone) |
-| 6 | **TB6612FNG motor driver** | 1 | HAVE | Dual H-bridge driver with STBY enable pin; low voltage drop and minimal heat |
-| 7 | **Single LiPo cells** | 2 | HAVE | 3.7 V nominal each (7.4 V in series); measure voltages before joining (must match within 0.05 V) |
-| 8 | **LiPo charger** | 1 | HAVE | Charge each cell individually to 4.20 V; never leave charging cells unattended |
-| 9 | **Multimeter** | 1 | HAVE | Essential for setting buck converter to 5.0 V, battery monitoring, and continuity checks |
-| 10 | **Soldering iron, solder, flux** | 1 set | HAVE | For wire harnesses, power switch, capacitors, and assembling the custom PCB |
-| 11 | **Screwdriver set** | 1 | HAVE | For chassis assembly, motor mounting, and adjusting buck converter potentiometer |
-| 12 | **USB cable for the Nano** | 1 | HAVE | Mini-USB cable for firmware upload and real-time serial telemetry |
-| 13 | **Jumper wires (M-M and M-F)** | 1 set | HAVE | For Part B breadboard prototyping and wiring sensor/driver modules |
-| 14 | **Breadboard** | 1 | HAVE | For bench bring-up tests to prove circuits before designing the PCB |
-| 15 | **LM2596 buck module (adjustable, no display)** | 1 | BUY (local store) | Set to exactly 5.0 V with multimeter before connecting the Nano 5V rail |
-| 16 | **Slide switch (at least 1 A)** | 1 | BUY (local store) | Moves from the breadboard to the PCB later; switches battery positive |
-| 17 | **Tactile push button** | 1 | BUY (local store) | The robot needs 2 (Start and Calibrate). You have 1, so buy 1 more |
-| 18 | **Capacitors: 100 µF 16 V ×2, 0.1 µF ceramic ×6** | 1 set | BUY (local store) | Motor supply decoupling (100 µF + 0.1 µF across VM/GND) and 5V rail filtering |
-| 19 | **LEDs ×2 (one is a backup) & 330 Ω resistors ×2** | 1 set | BUY (local store) | External status LED on D12 with current-limiting resistor |
-| 20 | **LiPo battery holder (holds both cells in series, two output wires)** | 1 | BUY (local store) | Take a cell with you to the store and check that it fits |
-| 21 | **Battery connector pair (XT30 or JST-XH)** | 1 pair | BUY (local store) | One half on the holder’s wires, the other half on the breadboard lead and later the PCB |
-| 22 | **Ball caster** | 1 | BUY (before CAD) | Front low-friction skid/support; its height decides chassis geometry, so measure once in hand |
-| 23 | **Wire cutter and stripper** | 1 | BUY (online order) | Essential for making clean harnesses, stripping leads, and wire routing |
+## Build steps
 
----
+1. **Bench test.** Connect everything on a breadboard. Read the sensors, spin the motors, calibrate, and check the position value.
+2. **Chassis.** Design it in SolidWorks and test-print small parts first.
+3. **PCB.** Design it in KiCad, check a 1:1 paper print against the real parts, then order it.
+4. **Assemble and tune.** Tune Kp first, then Kd. Add Ki last, or leave it at zero.
+5. **Race.** Recalibrate on the actual track before every run.
 
-### Procurement Summary
-- **In Hand (14 items):** Motors, tyres, RLS-08 sensor, Nano, TB6612FNG, LiPos, charger, multimeter, soldering kit, tools, USB cable, jumpers, breadboard.
-- **To Procure (9 items):** N20 brackets, LM2596 buck module, slide switch, 1 tactile push button, capacitor pack, LEDs + 330 Ω resistors, 2S LiPo holder, battery connector pair, ball caster, wire stripper.
+## Safety
+
+- Charge each LiPo cell separately and never leave it unattended.
+- Measure both cells before joining them.
+- Switch the robot off before plugging in USB.
+
+## Full guide
+
+See [The Line Follower Book](docs/the_line_follower_book.md) for the detailed steps, code, KiCad and SolidWorks lessons, tuning and race-day checklist.
