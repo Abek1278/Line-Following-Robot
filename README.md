@@ -34,30 +34,6 @@ An 8-sensor line follower with PID control, a custom 3D-printed chassis and a cu
 
 Tools: soldering iron and flux, wire cutter and stripper, screwdriver set, breadboard, jumper wires (male-male and male-female), USB cable.
 
-## Pin map (Arduino Nano)
-
-| Function | Pin |
-|---|---|
-| Sensors S1 to S8 (left to right) | A0 to A7 |
-| Left motor (PWMA, AIN1, AIN2) | D5, D7, D8 |
-| Right motor (PWMB, BIN1, BIN2) | D6, D4, D9 |
-| Driver standby (STBY) | D3 (must be HIGH) |
-| Start button (to GND) | D2 |
-| Calibrate button (to GND) | D10 |
-| Status LED | D12 |
-
-## Power
-
-Battery → slide switch → buck module and TB6612 VM. Buck 5.0 V → Nano 5V pin, TB6612 VCC and sensor VCC. All grounds are connected together.
-
-## Build steps
-
-1. **Bench test.** Connect everything on a breadboard. Read the sensors, spin the motors, calibrate, and check the position value.
-2. **Chassis.** Design it in SolidWorks and test-print small parts first.
-3. **PCB.** Design it in KiCad, check a 1:1 paper print against the real parts, then order it.
-4. **Assemble and tune.** Tune Kp first, then Kd. Add Ki last, or leave it at zero.
-5. **Race.** Recalibrate on the actual track before every run.
-
 ## Safety
 
 - Charge each LiPo cell separately and never leave it unattended.
