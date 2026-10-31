@@ -39,7 +39,3 @@ Tools: soldering iron and flux, wire cutter and stripper, screwdriver set, bread
 - Charge each LiPo cell separately and never leave it unattended.
 - Measure both cells before joining them.
 - Switch the robot off before plugging in USB.
-
-## Full guide
-
-See [The Line Follower Book](docs/the_line_follower_book.md) for the detailed steps, code, KiCad and SolidWorks lessons, tuning and race-day checklist.
