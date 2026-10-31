@@ -1,11 +1,11 @@
 # Line Follower Robot
 
-An 8-sensor line follower with PID control, a custom 3D-printed chassis and a custom PCB. It runs on an Arduino Nano.
+An 8-sensor, PID-controlled line follower with a custom 3D-printed chassis and a custom PCB, built on an Arduino Nano.
 
 ## How it works
 
-1. **Sense:** the RLS-08 sensor array looks at the floor. Black reflects less light than white.
-2. **Decide:** the Nano turns the 8 readings into one position number (0 to 7000, centre = 3500). Then it calculates the error:
+1. **Sense:** the RLS-08 sensor array reads the floor. Black reflects less infrared light than white, so the line gives a different reading from the floor.
+2. **Decide:** the Nano combines the 8 readings into one position number (0 to 7000, centre = 3500), then finds the error (positive means the line is to the right):
    `error = position - 3500`
 3. **Act:** PID turns the error into a steering correction. The TB6612 driver speeds up one motor and slows the other:
    `left = speed + correction` and `right = speed - correction`
